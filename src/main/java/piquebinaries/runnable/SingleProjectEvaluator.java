@@ -20,7 +20,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package pique.runnable;
+package pique-binaries.runanble;
+
 
 import org.apache.commons.io.FilenameUtils;
 import pique.model.Diagnostic;
