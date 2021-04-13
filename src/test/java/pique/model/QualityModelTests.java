@@ -25,11 +25,8 @@ package pique.model;
 import org.junit.Assert;
 import org.junit.Test;
 import pique.analysis.ITool;
-import pique.runnable.QualityModelDeriver;
-import pique.utility.MockedIToolQmFull;
-import pique.utility.MockedIToolQmSimple;
+import piquebinaries.runnable.QualityModelDeriver;
 import pique.utility.MockedLocTool;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -114,7 +111,7 @@ public class QualityModelTests {
 
         String projectRootFlag = ".txt";
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
-        ITool mockedTool = new MockedIToolQmSimple();
+        ITool mockedTool = null;
         ITool locTool = new MockedLocTool();
         Set<ITool> tools = Stream.of(mockedTool, locTool).collect(Collectors.toSet());
 

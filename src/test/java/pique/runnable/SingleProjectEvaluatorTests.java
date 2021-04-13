@@ -28,9 +28,8 @@ import pique.analysis.ITool;
 import pique.evaluation.Project;
 import pique.model.*;
 import pique.utility.MockedIToolQmFull;
-import pique.utility.MockedIToolQmSimple;
 import pique.utility.MockedLocTool;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import piquebinaries.runnable.QualityModelDeriver;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,13 +49,13 @@ public class SingleProjectEvaluatorTests {
         Path qmFilePath = Paths.get("src/test/resources/quality_models/qualityModel_minimal_description.json");
         String projectRootFlag = ".txt";
         Path benchmarkRepo = Paths.get("src/test/resources/benchmark_repository");
-        ITool mockedTool = new MockedIToolQmSimple();
+        ITool mockedTool = null;
         ITool locTool = new MockedLocTool();
         Set<ITool> tools = Stream.of(mockedTool, locTool).collect(Collectors.toSet());
 
         QualityModelImport qmImport = new QualityModelImport(qmFilePath);
         QualityModel qmDescription = qmImport.importQualityModel();
-        QualityModel qualityModel = QualityModelDeriver.deriveModel(qmDescription, tools, benchmarkRepo,
+        QualityModel qualityModel = piquebinaries.runnable.QualityModelDeriver.deriveModel(qmDescription, tools, benchmarkRepo,
                 projectRootFlag);
 
         // Export as artifact

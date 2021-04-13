@@ -20,8 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package pique-binaries.runanble;
-
+package piquebinaries.runnable;
 
 import org.apache.commons.io.FilenameUtils;
 import pique.model.Diagnostic;
@@ -29,11 +28,11 @@ import pique.analysis.ITool;
 import pique.evaluation.Project;
 import pique.model.QualityModel;
 import pique.model.QualityModelImport;
+import utilities.PiqueProperties;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * Behavioral class responsible for running TQI evaluation of a single project
@@ -43,8 +42,31 @@ import java.util.Set;
 // TODO (1.0): turn into static methods (maybe unless logger problems)
 public class SingleProjectEvaluator {
 
+    public static void main(String[] args){
+        new SingleProjectEvaluator();
+    }
+
     private Project project;
 
+
+    public SingleProjectEvaluator(){
+        Properties prop = PiqueProperties.getProperties();
+
+        Path projectRoot = Paths.get(prop.getProperty("project.root"));
+        Path blankqmFilePath = Paths.get(prop.getProperty("blankqm.filepath"));
+        Path resultsDir = Paths.get(prop.getProperty("results.directory"));
+
+        // Initialize objects
+        String projectRootFlag = ".txt";
+        Path benchmarkRepo = Paths.get(prop.getProperty("benchmark.repo"));
+
+        Path qmLocation = Paths.get("out/BinarySecurityQualityModel.json");
+
+        Set<ITool> tools = new HashSet<>();
+        Path outputPath = runEvaluator(projectRoot, resultsDir, qmLocation, tools);
+        System.out.println("output: " + outputPath.getFileName());
+
+    }
     //region Get / Set
     public Project getEvaluatedProject() {
         return project;
@@ -84,14 +106,6 @@ public class SingleProjectEvaluator {
             allDiagnostics.putAll(runTool(projectDir, tool));
         });
 
-        // Run LOC tool to set lines of code
-        int linesOfCode = (int)allDiagnostics.get("loc").getValue();
-        // TODO (1.0): need to rethink loc, normalizer, evaluator interactions for benchmark repository
-        //  interactions
-        project.setLinesOfCode(linesOfCode);
-        project.getQualityModel().getMeasures().values().forEach(measure -> {
-            measure.getNormalizerObject().setNormalizerValue(linesOfCode);
-        });
 
         // Apply tool results to Project object
         project.updateDiagnosticsWithFindings(allDiagnostics);
